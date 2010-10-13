@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- zk.wpd
+	Purpose:
+
+	Description:
+
+	History:
+		2010/10/13, Created by TonyQ
+
+Copyright (C) 2010 Potix Corporation. All Rights Reserved.
+-->
+<package name="rating" language="xul/html" depends="zul.inp" >
+	<widget name="Rating" />
+</package>

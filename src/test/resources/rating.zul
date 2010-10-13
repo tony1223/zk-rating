@@ -1,0 +1,18 @@
+<?page title="test rating" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="test rating" border="normal">
+
+	<label value="value1" />
+	<rating id="r1" value="0" step="100" />
+
+	<label value="value2" />
+	<rating id="r2" value="50" step="5" />
+
+	<label value="value3" />
+	<rating id="r3" value="20" step="2" />
+
+	<label value="value4" />
+	<rating id="r4" value="10" step="3" />
+
+</window>
+</zk>
