@@ -122,8 +122,6 @@
          * we need to show up the slider .
          */
         doRating_:function(){
-            this._ratingtmp = this._ratedvalue == -1 ? this._value :
-                this._ratedvalue ;
             this._updatestate(rating.Rating.RATING);
             //@TODO check if here needs a rating start event
         },
