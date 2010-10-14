@@ -1,4 +1,29 @@
-I am preparing a zk component for rating,
-but it's not finished yet .
 
-Coming soon.
+Version 0.8.0  (The first version actually)
+-- 2010/10/14 1704 by TonyQ
+
+Ok , now it's working like a normal component .
+
+This is a maven component project ,
+that means if you want to develope this component ,
+you need to install maven enviroment .
+
+If you are a eclipse guy , you need m2eclipse anyways .
+I am not going to talk about maven too much , you can find a lot data in internet about it.
+
+
+I put a simple testing zul (index.zul) in [src/test/resources] ,
+and I hope this is enough to use now , because that's what i need.
+
+
+I think about that may be we need a read-only version ,
+think if we need a feature like that, if you find any user-case about it ,
+maybe we should do one.
+
+
+
+## Thanks Richard , who provide the ideas and the skeleton zul for me . :) ##
+
+Anyway , if you want to contribute anything for this project,
+it's welcome , just let me know . (tonylovejava@gmail.com)
+

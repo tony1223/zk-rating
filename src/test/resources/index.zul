@@ -1,0 +1,56 @@
+<?page title="Rating demo" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Rating demo" border="normal">
+	<listbox width="200px" >
+	<listhead>
+		<listheader label="game" sort="auto" />
+		<listheader label="rating" />
+	</listhead>
+	<listitem>
+		<listcell label="WOW" />
+		<listcell>
+			<rating value="60" />
+		</listcell>
+	</listitem>
+	<listitem>
+		<listcell label="Starcraft2" />
+		<listcell>
+			<rating value="90" >
+				<attribute name="onRating">
+					alert("I like this, but you record it :" + event.getValue());
+				</attribute>
+			</rating>
+		</listcell>
+	</listitem>
+	<listitem>
+		<listcell label="Warcraft 3" />
+		<listcell>
+			<rating value="75" />
+		</listcell>
+	</listitem>
+	<listitem>
+		<listcell label="ZK (eh ?)" />
+		<listcell>
+			<rating value="100" >
+				<attribute name="onRating">
+					self.setValue( 100 );
+					alert("You record it " + event.getValue()+
+						", but i wanna it be 100.");
+					// no matter what you rate , it would be 100 of course. lol
+					// Just for fun. :)
+				</attribute>
+			</rating>
+		</listcell>
+	</listitem>
+	<listitem>
+		<listcell label="Others" />
+		<listcell>
+			<rating />
+		</listcell>
+	</listitem>
+</listbox>
+
+<button onClick="page.invalidate();" label="invilidate"/>
+invalidate for make sure server is sync with client
+</window>
+</zk>

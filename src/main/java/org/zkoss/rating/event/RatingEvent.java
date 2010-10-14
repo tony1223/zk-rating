@@ -13,10 +13,6 @@ package org.zkoss.rating.event;
 
 import java.util.Map;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
-import org.zkoss.util.Utils;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -36,10 +32,21 @@ import org.zkoss.zk.ui.event.Event;
 
 public class RatingEvent extends Event {
 
+	/**
+	 * The Event name is onRating
+	 */
 	public final static String NAME = "onRating";
 
+	/**
+	 * the value for user rated
+	 */
 	private int _value = 0;
 
+	/**
+	 * @param command event name
+	 * @param target target component
+	 * @param ratingvalue the value for user rated
+	 */
 	public RatingEvent(String command, Component target, int ratingvalue) {
 		super(command, target);
 		this._value = ratingvalue;
@@ -64,10 +71,18 @@ public class RatingEvent extends Event {
 		return new RatingEvent(request.getCommand(), comp, value);
 	}
 
+	/**
+	 * the value for user rated
+	 * @return
+	 */
 	public int getValue() {
 		return _value;
 	}
 
+	/**
+	 *
+	 * @param value
+	 */
 	public void setValue(int value) {
 		this._value = value;
 	}

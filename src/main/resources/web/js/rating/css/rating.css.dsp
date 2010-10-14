@@ -15,7 +15,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 --%><%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>
 
 .z-rating{
-	width:80px;
+	width: 85px;
 	text-align:center;
 }
 .z-rating-star-empty,.z-rating-star-full{
@@ -25,6 +25,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	width: 75px;
 	padding-left:5px;
 	position:relative;
+	height:14px;
+	overflow:hidden;
 }
 .z-rating-star-empty{
     width:14px;

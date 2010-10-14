@@ -10,11 +10,23 @@
  Copyright (C) 2010 Potix Corporation. All Rights Reserved.
  */
 (function(){
-
+    /**
+     * The rating widget.
+     */
     rating.Rating = zk.$extends(zk.Widget, {
+        /**
+         *  a temp value for saving the user's slider value.
+         */
         _ratingtmp:0,
+        /**
+         * just like server side , it means rated value is setted
+         */
         _rated:false,
         $define:{
+            /**
+             * the rated value for user
+             * @param {Object} val
+             */
             ratedvalue:function(val){
                 if(this.$n()){
                     this._label.setValue("You rated this: "+val+"/100");
@@ -27,30 +39,20 @@
                 this._updatestate( rating.Rating.RATED );
 
             },
+            /**
+             *  The value which decide the stars , it's usually to be something
+             *  like a statistic value , for example , every rater's average .
+             * @param {Object} val
+             */
             value:function(val){
                 if (this.$n()) {
                     this._updateStar(val);
                 }
             }
         },
-        _updatestate:function(state){
-            if(state == rating.Rating.RATED){
-                this._slider.setVisible(false);
-                this._submitbtn.setVisible(false);
-                this._ratebtn.setVisible(false);
-                this._label.setVisible(true);
-            }else if(state == rating.Rating.RATING){
-                this._slider.setVisible(true);
-                this._submitbtn.setVisible(true);
-                this._ratebtn.setVisible(false);
-                this._label.setVisible(false);
-            }else if(state == rating.Rating.WAIT){
-                this._slider.setVisible(false);
-                this._submitbtn.setVisible(false);
-                this._ratebtn.setVisible(true);
-                this._label.setVisible(false);
-            }
-        },
+        /**
+         * init method , we create 4 children and append them here .
+         */
         $init: function() {
     	    this.$supers(rating.Rating,'$init', arguments);
 
@@ -76,11 +78,12 @@
 
             this._updatestate(rating.Rating.WAIT);
         },
-        doRating_:function(){
-            this._ratingtmp = this._ratedvalue == -1 ? this._value : this._ratedvalue ;
-            this._updatestate(rating.Rating.RATING);
-            //@TODO check if here needs a rating start event
-        },
+        /**
+         * event binding here.
+         * @param {Object} desktop
+         * @param {Object} skipper
+         * @param {Object} after
+         */
         bind_: function(desktop, skipper, after){
             this.$supers(rating.Rating, 'bind_', arguments);
 
@@ -89,50 +92,132 @@
                jq(this).css("left", jq(this).prev().position().left);
             });
 
+            this._updateStar(this._value);
+            if(this._ratedvalue != -1 ){
+                this._label.setValue("You rated this: "+this._ratedvalue+"/100");
+            }
+
             this.domListen_(this._ratebtn.$n(),"onClick","doRating_");
             this.domListen_(this._submitbtn.$n(),"onClick","doRatingEnd_");
             this._slider.listen({onScroll:[this,this.doRatingScroll_]});
 
         },
+        /**
+         * event un binding here
+         */
+        unbind_: function(){
+
+            this.domUnlisten_(this._submitbtn.$n(),"onClick","doRatingEnd_");
+            this.domUnlisten_(this._ratebtn.$n(),"onClick","doRating_");
+            this.$supers(rating.Rating, "unbind_", arguments);
+        },
+        /**
+         * the zclass , default is z-rating
+         */
+        getZclass: function(){
+            return (this._zclass != null ? this._zclass : "z-rating");
+        },
+        /**
+         * this method trigger when user going to rate ,
+         * we need to show up the slider .
+         */
+        doRating_:function(){
+            this._ratingtmp = this._ratedvalue == -1 ? this._value :
+                this._ratedvalue ;
+            this._updatestate(rating.Rating.RATING);
+            //@TODO check if here needs a rating start event
+        },
+        /**
+         * each time user slide end , we need to update stars here.
+         */
         doRatingScroll_:function(){
             this._ratingtmp = this._slider.getCurpos();
             this._updateStar(this._ratingtmp);
 
             //@TODO check if here needs a rating start event
         },
+        /**
+         * user click submit button , so we need to tell server to update here.
+         */
         doRatingEnd_:function(){
             this._updateStar(this._value);
             this.fire("onRating",{ val: this._ratingtmp });
         },
+        /**
+         * private method for update the star,
+         * about the star, it's kind of tricky for css/javascript , lol.
+         * @param {Object} val the value , 0 ~ 100
+         */
         _updateStar:function(val){
-             var zcls = this.getZclass();
-             var stars = jq("."+zcls+"-star-full",this.$n());
+             var zcls = this.getZclass() ,
+                 stars = jq("."+zcls+"-star-full",this.$n()),
+                 fullwidth = 14 ,
+                 gap = 20 ;
+
+            /*
+             *  maybe i should refactor here .
+             *  the base rule is every gap for one star.
+             *   20  stars  *
+             *   40         **
+             *   60         ***
+             *   80         ****
+             *  100         *****
+             *
+             *  If they are not divisible with 20 ,
+             *  we just count the ratio and set it.
+             */
              stars.width(0);
-             if(val >= 20 )
-                 stars.eq(0).width(14);
-             if(val >= 40 )
-                 stars.eq(1).width(14);
-             if(val >= 60 )
-                 stars.eq(2).width(14);
-             if(val >= 80 )
-                 stars.eq(3).width(14);
+             if(val >= gap )
+                 stars.eq(0).width(fullwidth); // a full star is 14 px width.
+             if(val >= gap *2 )
+                 stars.eq(1).width(fullwidth);
+             if(val >= gap *3 )
+                 stars.eq(2).width(fullwidth);
+             if(val >= gap *4 )
+                 stars.eq(3).width(fullwidth);
 
-             if(val >= 100 )
-                 stars.eq(4).width(14);
+             if(val >= gap *5 )
+                 stars.eq(4).width(fullwidth);
              else
-                 stars.eq( zk.parseInt(val/20) ).width(14 * ((val%20) /20) );
+                 stars.eq( zk.parseInt( val / gap ) ).width(
+                     fullwidth * ((val % gap) /gap) );
 
         },
-        unbind_: function(){
-            this.$supers(rating.Rating, "unbind_", arguments);
-        },
-        getZclass: function(){
-            return (this._zclass != null ? this._zclass : "z-rating");
+        /**
+         * private method for manage the state ,
+         * we have three state here.
+         */
+        _updatestate:function(state){
+            if(state == rating.Rating.RATED){
+                this._slider.setVisible(false);
+                this._submitbtn.setVisible(false);
+                this._ratebtn.setVisible(false);
+                this._label.setVisible(true);
+            }else if(state == rating.Rating.RATING){
+                this._slider.setVisible(true);
+                this._submitbtn.setVisible(true);
+                this._ratebtn.setVisible(false);
+                this._label.setVisible(false);
+            }else if(state == rating.Rating.WAIT){
+                this._slider.setVisible(false);
+                this._submitbtn.setVisible(false);
+                this._ratebtn.setVisible(true);
+                this._label.setVisible(false);
+            }
         }
-
     },{
+        /**
+         * some state here .
+         * rated when user set ratedvalue
+         */
         RATED:"rated",
+        /**
+         * rating when user click rate this
+         */
         RATING:"rating",
+        /**
+         * when user is not rating, it's waiting state.
+         */
         WAIT:"wait"
     });
 })();
