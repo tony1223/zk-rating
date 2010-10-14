@@ -12,28 +12,73 @@
 (function(){
 
     rating.Rating = zk.$extends(zk.Widget, {
-        _ratingtmp:-1,
+        _ratingtmp:0,
+        _rated:false,
+        $define:{
+            ratedvalue:function(val){
+                if(this.$n()){
+                    this._label.setValue("You rated this: "+val+"/100");
+                }
+                _rated = true;
+
+                if (this._value == -1 ){
+                    this.setValue(this._ratedvalue);
+                }
+                this._updatestate( rating.Rating.RATED );
+
+            },
+            value:function(val){
+                if (this.$n()) {
+                    this._updateStar(val);
+                }
+            }
+        },
+        _updatestate:function(state){
+            if(state == rating.Rating.RATED){
+                this._slider.setVisible(false);
+                this._submitbtn.setVisible(false);
+                this._ratebtn.setVisible(false);
+                this._label.setVisible(true);
+            }else if(state == rating.Rating.RATING){
+                this._slider.setVisible(true);
+                this._submitbtn.setVisible(true);
+                this._ratebtn.setVisible(false);
+                this._label.setVisible(false);
+            }else if(state == rating.Rating.WAIT){
+                this._slider.setVisible(false);
+                this._submitbtn.setVisible(false);
+                this._ratebtn.setVisible(true);
+                this._label.setVisible(false);
+            }
+        },
         $init: function() {
     	    this.$supers(rating.Rating,'$init', arguments);
+
+            this._ratedvalue = -1;
+            this._value = -1 ;
+
             this._ratebtn = new zul.wgt.Toolbarbutton();
             this._ratebtn.setLabel("rate this");
-
-            this._submitbtn = new zul.wgt.Toolbarbutton();
-            this._submitbtn.setLabel("Submit rating");
-
+            this.appendChild(this._ratebtn);
 
             this._slider = new zul.inp.Slider();
             this._slider.setWidth("69px");
-            this.appendChild(this._ratebtn);
             this.appendChild(this._slider);
+
+            this._label = new zul.wgt.Label();
+            this._label.setValue("You rated this: " + this._ratedvalue + "/100");
+
+            this.appendChild(this._label);
+
+            this._submitbtn = new zul.wgt.Toolbarbutton();
+            this._submitbtn.setLabel("Submit rating");
             this.appendChild(this._submitbtn);
 
-            this._slider.setVisible(false);
-            this._submitbtn.setVisible(false);
+            this._updatestate(rating.Rating.WAIT);
         },
         doRating_:function(){
-            this._slider.setVisible(true);
-            this._ratebtn.setVisible(false);
+            this._ratingtmp = this._ratedvalue == -1 ? this._value : this._ratedvalue ;
+            this._updatestate(rating.Rating.RATING);
             //@TODO check if here needs a rating start event
         },
         bind_: function(desktop, skipper, after){
@@ -51,14 +96,15 @@
         },
         doRatingScroll_:function(){
             this._ratingtmp = this._slider.getCurpos();
-            this._updateImage(this._ratingtmp);
-            this._submitbtn.setVisible(true);
+            this._updateStar(this._ratingtmp);
+
             //@TODO check if here needs a rating start event
         },
         doRatingEnd_:function(){
-            alert("end");
+            this._updateStar(this._value);
+            this.fire("onRating",{ val: this._ratingtmp });
         },
-        _updateImage:function(val){
+        _updateStar:function(val){
              var zcls = this.getZclass();
              var stars = jq("."+zcls+"-star-full",this.$n());
              stars.width(0);
@@ -84,5 +130,9 @@
             return (this._zclass != null ? this._zclass : "z-rating");
         }
 
+    },{
+        RATED:"rated",
+        RATING:"rating",
+        WAIT:"wait"
     });
 })();

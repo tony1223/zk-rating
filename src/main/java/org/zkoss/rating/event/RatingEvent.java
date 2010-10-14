@@ -13,19 +13,36 @@ package org.zkoss.rating.event;
 
 import java.util.Map;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
+import org.zkoss.util.Utils;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 
 /**
- * trigger when tab is moved by user's dragging.
+ * The event when user rating end , server side will receive the event , and
+ * user should decide to update the value for what by themself.
+ *
+ * Because we didnt know how user want to present the rating , maybe it's a
+ * average from database , we dont know .
+ *
+ * So we ask user to handle this event and decide how it work.
+ *
+ * @author tony
+ *
  */
+
 public class RatingEvent extends Event {
 
 	public final static String NAME = "onRating";
 
-	public RatingEvent(String command, Component target) {
+	private int _value = 0;
+
+	public RatingEvent(String command, Component target, int ratingvalue) {
 		super(command, target);
+		this._value = ratingvalue;
 
 	}
 
@@ -40,11 +57,18 @@ public class RatingEvent extends Event {
 
 		final Map data = request.getData();
 
-		/*
-		 * if (startIndex == -1 || endIndex == -1) { throw new
-		 * IllegalArgumentException("startIndex/endIndex wrong."); }
-		 */
+		if (!data.containsKey("val")) {
+			throw new IllegalArgumentException("value wrong.");
+		}
+		int value = ((Integer) data.get("val")).intValue();
+		return new RatingEvent(request.getCommand(), comp, value);
+	}
 
-		return new RatingEvent(request.getCommand(),comp);
+	public int getValue() {
+		return _value;
+	}
+
+	public void setValue(int value) {
+		this._value = value;
 	}
 }
