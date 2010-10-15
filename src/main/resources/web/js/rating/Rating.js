@@ -1,6 +1,6 @@
 /* Rating.js
  *
-	Purpose: To provide a movable and lighter tab.
+	Purpose: Provide a rating component
 
 	Description:
 
