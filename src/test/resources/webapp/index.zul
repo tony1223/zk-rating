@@ -1,7 +1,7 @@
 <?page title="Rating demo" contentType="text/html;charset=UTF-8"?>
 <zk>
 <window title="Rating demo" border="normal">
-	<listbox width="200px" >
+	<listbox >
 	<listhead>
 		<listheader label="game" sort="auto" />
 		<listheader label="rating" />
@@ -34,6 +34,7 @@
 			<rating value="100" >
 				<attribute name="onRating">
 					self.setValue( 100 );
+					self.setRatedvalue(event.getValue());
 					alert("You record it " + event.getValue()+
 						", but i wanna it be 100.");
 					// no matter what you rate , it would be 100 of course. lol
@@ -42,6 +43,21 @@
 			</rating>
 		</listcell>
 	</listitem>
+	<listitem>
+		<listcell label="Non rated test case" />
+		<listcell>
+			<rating value="100" readOnly="true" >
+				<attribute name="onRating">
+					self.setValue( 100 );
+					self.setRatedvalue(event.getValue());
+					alert("You record it " + event.getValue()+
+						", but i wanna it be 100.");
+					// no matter what you rate , it would be 100 of course. lol
+					// Just for fun. :)
+				</attribute>
+			</rating>
+		</listcell>
+	</listitem>	
 	<listitem>
 		<listcell label="Others" />
 		<listcell>

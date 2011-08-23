@@ -23,20 +23,19 @@
          */
         _rated:false,
         $define:{
+			readOnly:function (){
+				this._updatestate( rating.Rating.READONLY );
+			},
             /**
              * the rated value for user
              * @param {Object} val
              */
             ratedvalue:function(val){
-                if(this.$n()){
-                    this._label.setValue("You rated this: "+val+"/100");
+                this._rated = true;
+                this._updatestate( rating.Rating.RATED );				
+				if(this.desktop){
+                   this._updateLabel();
                 }
-                _rated = true;
-
-                if (this._value == -1 ){
-                    this.setValue(this._ratedvalue);
-                }
-                this._updatestate( rating.Rating.RATED );
 
             },
             /**
@@ -45,8 +44,9 @@
              * @param {Object} val
              */
             value:function(val){
-                if (this.$n()) {
+                if (this.desktop) {
                     this._updateStar(val);
+					this._updateLabel();
                 }
             }
         },
@@ -92,10 +92,12 @@
                jq(this).css("left", jq(this).prev().position().left);
             });
 
+			if( this._readOnly ){
+				this._updatestate( rating.Rating.READONLY );
+			}
+			
             this._updateStar(this._value);
-            if(this._ratedvalue != -1 ){
-                this._label.setValue("You rated this: "+this._ratedvalue+"/100");
-            }
+			this._updateLabel();
 
             this.domListen_(this._ratebtn.$n(),"onClick","doRating_");
             this.domListen_(this._submitbtn.$n(),"onClick","doRatingEnd_");
@@ -181,6 +183,15 @@
                      fullwidth * ((val % gap) /gap) );
 
         },
+		_updateLabel:function() {
+            if(this.desktop){
+				if(this._rated){
+					this._label.setValue( "Rated: " + this._value + " ( " +this._ratedvalue +" )");	
+				}else{
+					this._label.setValue( this._value );
+				}
+            }
+		},
         /**
          * private method for manage the state ,
          * we have three state here.
@@ -201,7 +212,12 @@
                 this._submitbtn.setVisible(false);
                 this._ratebtn.setVisible(true);
                 this._label.setVisible(false);
-            }
+            }else if(state == rating.Rating.READONLY){
+                this._slider.setVisible(false);
+                this._submitbtn.setVisible(false);
+                this._ratebtn.setVisible(false);
+                this._label.setVisible(true);				
+			}
         }
     },{
         /**
