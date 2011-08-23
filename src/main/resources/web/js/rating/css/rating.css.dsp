@@ -15,15 +15,20 @@ it will be useful, but WITHOUT ANY WARRANTY.
 --%><%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>
 
 .z-rating{
-	width: 85px;
+	width: 100px;
 	text-align:center;
 }
 .z-rating-star-empty,.z-rating-star-full{
 	float:left;
 }
+
+.z-rating .z-slider-hor{
+	margin-left:9px;
+}
+
 .z-rating-stars{
 	width: 75px;
-	padding-left:5px;
+	padding-left:15px;
 	position:relative;
 	height:14px;
 	overflow:hidden;

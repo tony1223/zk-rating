@@ -21,16 +21,20 @@ import org.zkoss.zul.impl.XulElement;
 
 /**
  * Write a rating component from Richard's idea and implements.^^;;
- *
+ * 
  * @author tony
- *
+ * 
  */
 public class Rating extends XulElement implements Comparable {
+
+	static {
+		addClientEvent(Rating.class, RatingEvent.NAME, 0);
+	}
 
 	/**
 	 * The value which decide the stars , it's usually to be something like a
 	 * statistic value , for example , every rater's average .
-	 *
+	 * 
 	 */
 	private int _value = -1;
 
@@ -40,14 +44,12 @@ public class Rating extends XulElement implements Comparable {
 	 */
 	private int _ratedvalue = -1;
 
-	{
-		addClientEvent(Rating.class, RatingEvent.NAME, CE_IMPORTANT | CE_NON_DEFERRABLE);
-	}
-
 	/**
 	 * this is for some situation
 	 */
 	private boolean _rated = false;
+
+	private boolean readOnly = false;
 
 	/**
 	 * The default zclass is "z-rating"
@@ -64,6 +66,11 @@ public class Rating extends XulElement implements Comparable {
 		if (_value != -1) {
 			render(renderer, "value", "" + _value);
 		}
+
+		if (this.readOnly) {
+			render(renderer, "readOnly", this.readOnly);
+		}
+
 		if (_ratedvalue != -1) {
 			render(renderer, "ratedvalue", "" + _ratedvalue);
 		}
@@ -71,10 +78,10 @@ public class Rating extends XulElement implements Comparable {
 	}
 
 	/**
-	 *
+	 * 
 	 * The value which decide the stars , it's usually to be something like a
-	 * statistic value , for example , every rater's average .
-	 * default is -1.
+	 * statistic value , for example , every rater's average . default is -1.
+	 * 
 	 * @return
 	 */
 	public int getValue() {
@@ -83,7 +90,7 @@ public class Rating extends XulElement implements Comparable {
 
 	/**
 	 * set the value
-	 *
+	 * 
 	 * @param value
 	 */
 	public void setValue(int value) {
@@ -96,7 +103,7 @@ public class Rating extends XulElement implements Comparable {
 
 	/**
 	 * we will handle the rating event. here
-	 *
+	 * 
 	 * @Override
 	 */
 	public void service(AuRequest request, boolean everError) {
@@ -115,7 +122,7 @@ public class Rating extends XulElement implements Comparable {
 	/**
 	 * Default event handler,we will set rated value here. but developer can
 	 * decide to stop the event or not , it's free.
-	 *
+	 * 
 	 * @param evt
 	 *            the rating event
 	 */
@@ -125,15 +132,12 @@ public class Rating extends XulElement implements Comparable {
 
 	/**
 	 * set user rated value.
-	 *
+	 * 
 	 * It will update the stars only if value is empty .
-	 *
+	 * 
 	 * @param ratedvalue
 	 */
 	public void setRatedvalue(int ratedvalue) {
-		if (this._value == -1) {
-			this._value = ratedvalue;
-		}
 		if (this._ratedvalue != ratedvalue) {
 			this._ratedvalue = ratedvalue;
 			this._rated = true;
@@ -143,7 +147,7 @@ public class Rating extends XulElement implements Comparable {
 
 	/**
 	 * get user rated value.
-	 *
+	 * 
 	 * @return
 	 */
 	public int getRatedvalue() {
@@ -152,7 +156,7 @@ public class Rating extends XulElement implements Comparable {
 
 	/**
 	 * if rated value is setted , rated value will be true. else will be false
-	 *
+	 * 
 	 * @return whether rated value is setted
 	 */
 	public boolean isRated() {
@@ -169,6 +173,17 @@ public class Rating extends XulElement implements Comparable {
 			return val.compareTo(tar);
 		}
 		return val.compareTo(arg0);
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		if (this.readOnly != readOnly) {
+			this.readOnly = readOnly;
+			smartUpdate("readOnly", readOnly);
+		}
 	}
 
 }
