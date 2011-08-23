@@ -49,7 +49,7 @@ public class Rating extends XulElement implements Comparable {
 	 */
 	private boolean _rated = false;
 
-	private boolean readOnly = false;
+	private boolean _readOnly = false;
 
 	/**
 	 * The default zclass is "z-rating"
@@ -67,17 +67,24 @@ public class Rating extends XulElement implements Comparable {
 			render(renderer, "value", "" + _value);
 		}
 
-		if (this.readOnly) {
-			render(renderer, "readOnly", this.readOnly);
+		if (this._readOnly) {
+			renderer.render("readOnly", this._readOnly);
 		}
-
+	
 		if (_ratedvalue != -1) {
 			render(renderer, "ratedvalue", "" + _ratedvalue);
+			
+			if(!this._rated){
+				renderer.render("rated", this._rated);
+			}
+			
+		}else if(_rated){
+			renderer.render("rated", this._rated);
 		}
-
+		
 	}
 
-	/**
+	/**	
 	 * 
 	 * The value which decide the stars , it's usually to be something like a
 	 * statistic value , for example , every rater's average . default is -1.
@@ -140,8 +147,12 @@ public class Rating extends XulElement implements Comparable {
 	public void setRatedvalue(int ratedvalue) {
 		if (this._ratedvalue != ratedvalue) {
 			this._ratedvalue = ratedvalue;
-			this._rated = true;
+			
+			this._rated = true;		
 			smartUpdate("ratedvalue", this._ratedvalue);
+			if(!this._rated){
+				smartUpdate("rated", true);	
+			}			
 		}
 	}
 
@@ -176,13 +187,22 @@ public class Rating extends XulElement implements Comparable {
 	}
 
 	public boolean isReadOnly() {
-		return readOnly;
+		return _readOnly;
 	}
 
 	public void setReadOnly(boolean readOnly) {
-		if (this.readOnly != readOnly) {
-			this.readOnly = readOnly;
+		if (this._readOnly != readOnly) {
+			this._readOnly = readOnly;
 			smartUpdate("readOnly", readOnly);
+		}
+	}
+
+	
+	public void setRated(boolean _rated) {
+		
+		if(this._rated != _rated ){
+			this._rated = _rated;
+			smartUpdate("rated",this._rated );
 		}
 	}
 

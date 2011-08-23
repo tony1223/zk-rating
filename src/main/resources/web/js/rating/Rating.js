@@ -24,7 +24,14 @@
         _rated:false,
 		_readOnly:false,
         $define:{
+			rated:function () {
+				if(this.desktop){
+                   this._updateLabel();
+                }
+				this._updateState();
+			},
 			readOnly:function (val){
+				this._updateState();
 			},
             /**
              * the rated value for user
