@@ -22,9 +22,9 @@
          * just like server side , it means rated value is setted
          */
         _rated:false,
+		_readOnly:false,
         $define:{
-			readOnly:function (){
-				this._updatestate( rating.Rating.READONLY );
+			readOnly:function (val){
 			},
             /**
              * the rated value for user
@@ -32,7 +32,7 @@
              */
             ratedvalue:function(val){
                 this._rated = true;
-                this._updatestate( rating.Rating.RATED );				
+                this._changeState( rating.Rating.RATED );				
 				if(this.desktop){
                    this._updateLabel();
                 }
@@ -76,7 +76,7 @@
             this._submitbtn.setLabel("Submit rating");
             this.appendChild(this._submitbtn);
 
-            this._updatestate(rating.Rating.WAIT);
+            this._changeState(rating.Rating.WAIT);
         },
         /**
          * event binding here.
@@ -92,12 +92,12 @@
                jq(this).css("left", jq(this).prev().position().left);
             });
 
-			if( this._readOnly ){
-				this._updatestate( rating.Rating.READONLY );
-			}
+			this._updateState();
 			
             this._updateStar(this._value);
 			this._updateLabel();
+
+			this.domListen_(this._label.$n(),"onClick","doRating_");
 
             this.domListen_(this._ratebtn.$n(),"onClick","doRating_");
             this.domListen_(this._submitbtn.$n(),"onClick","doRatingEnd_");
@@ -124,7 +124,8 @@
          * we need to show up the slider .
          */
         doRating_:function(){
-            this._updatestate(rating.Rating.RATING);
+			if(!this._readOnly)
+            	this._changeState(rating.Rating.RATING);
             //@TODO check if here needs a rating start event
         },
         /**
@@ -136,6 +137,14 @@
 
             //@TODO check if here needs a rating start event
         },
+		_updateState:function(){
+			if(this._readOnly)
+				this._changeState( rating.Rating.READONLY );
+			else if(this._rated)
+				this._changeState( rating.Rating.RATED );
+			else
+				this._changeState( rating.Rating.WAIT );
+		},
         /**
          * user click submit button , so we need to tell server to update here.
          */
@@ -196,7 +205,7 @@
          * private method for manage the state ,
          * we have three state here.
          */
-        _updatestate:function(state){
+        _changeState:function(state){
             if(state == rating.Rating.RATED){
                 this._slider.setVisible(false);
                 this._submitbtn.setVisible(false);
@@ -232,6 +241,7 @@
         /**
          * when user is not rating, it's waiting state.
          */
-        WAIT:"wait"
+        WAIT:"wait",
+		READONLY:"readonly"
     });
 })();

@@ -113,7 +113,7 @@ public class Rating extends XulElement implements Comparable {
 
 			// if user dont over write the method and write their on value rule,
 			// we just use user's rating score to be the value.
-			this.setValue(evt.getValue());
+			this.setRatedvalue(evt.getValue());
 			Events.postEvent(evt);
 		} else
 			super.service(request, everError);
