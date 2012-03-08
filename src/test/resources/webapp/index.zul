@@ -15,7 +15,7 @@
 	<listitem>
 		<listcell label="Starcraft2" />
 		<listcell>
-			<rating value="90" >
+			<rating mode="horizontal" value="90" >
 				<attribute name="onRating">
 					alert("I like this, but you record it :" + event.getValue());
 				</attribute>
@@ -31,7 +31,7 @@
 	<listitem>
 		<listcell label="ZK (eh ?)" />
 		<listcell>
-			<rating value="100" >
+			<rating value="100" mode="direct" >
 				<attribute name="onRating">
 					self.setValue( 100 );
 					self.setRatedvalue(event.getValue());

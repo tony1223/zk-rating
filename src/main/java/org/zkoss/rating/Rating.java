@@ -13,6 +13,7 @@ package org.zkoss.rating;
 
 import java.io.IOException;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.rating.event.RatingEvent;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.ui.event.Events;
@@ -27,6 +28,8 @@ import org.zkoss.zul.impl.XulElement;
  */
 public class Rating extends XulElement implements Comparable {
 
+	private static final long serialVersionUID = 1392931759283619871L;
+
 	static {
 		addClientEvent(Rating.class, RatingEvent.NAME, 0);
 	}
@@ -38,6 +41,7 @@ public class Rating extends XulElement implements Comparable {
 	 */
 	private int _value = -1;
 
+	private String _mode = "default";
 	/**
 	 * every single user may vote for their own value , and we will show the
 	 * value in view for them .
@@ -80,6 +84,10 @@ public class Rating extends XulElement implements Comparable {
 			
 		}else if(_rated){
 			renderer.render("rated", this._rated);
+		}
+		
+		if(!"default".equals(_mode)){
+			render(renderer,"mode", _mode);
 		}
 		
 	}
@@ -203,6 +211,23 @@ public class Rating extends XulElement implements Comparable {
 		if(this._rated != _rated ){
 			this._rated = _rated;
 			smartUpdate("rated",this._rated );
+		}
+	}
+
+	/**
+	 * @return the mode
+	 */
+	public String getMode() {
+		return _mode;
+	}
+
+	/**
+	 * @param mode the mode to set
+	 */
+	public void setMode(String mode) {
+		if(!Objects.equals(_mode, mode)){
+			this._mode = mode;
+			smartUpdate("mode",_mode);
 		}
 	}
 

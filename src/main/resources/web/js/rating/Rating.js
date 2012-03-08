@@ -14,6 +14,7 @@
      * The rating widget.
      */
     rating.Rating = zk.$extends(zk.Widget, {
+    	_mode:"default",
         /**
          *  a temp value for saving the user's slider value.
          */
@@ -44,6 +45,9 @@
                    this._updateLabel();
                 }
 
+            },
+            mode:function(){
+            	this.rerender();
             },
             /**
              *  The value which decide the stars , it's usually to be something
@@ -94,6 +98,9 @@
         bind_: function(desktop, skipper, after){
             this.$supers(rating.Rating, 'bind_', arguments);
 
+            if(this._mode == "horizontal"){
+            	jq(this.$n()).addClass(this.getZclass()+"-horizontal");
+            }
             var stars = jq("."+ this.getZclass() +"-star-full",this.$n());
             stars.each(function(){
                jq(this).css("left", jq(this).prev().position().left);
@@ -104,20 +111,29 @@
             this._updateStar(this._value);
 			this._updateLabel();
 
-			this.domListen_(this._label.$n(),"onClick","doRating_");
-
-            this.domListen_(this._ratebtn.$n(),"onClick","doRating_");
-            this.domListen_(this._submitbtn.$n(),"onClick","doRatingEnd_");
-            this._slider.listen({onScroll:[this,this.doRatingScroll_]});
+			if(this._mode != "direct"){
+				this.domListen_(this._label.$n(),"onClick","doRating_");
+	            this.domListen_(this._ratebtn.$n(),"onClick","doRating_");
+	            this.domListen_(this._submitbtn.$n(),"onClick","doRatingEnd_");
+	            this._slider.listen({onScroll:[this,this.doRatingScroll_]});
+			}else{
+				this.domListen_(this.$n(),"onMouseMove","doDirectRatingScroll_");
+				this.domListen_(this.$n(),"onClick","doDirectRatingEnd_");
+			}
 
         },
         /**
          * event un binding here
          */
         unbind_: function(){
-
-            this.domUnlisten_(this._submitbtn.$n(),"onClick","doRatingEnd_");
-            this.domUnlisten_(this._ratebtn.$n(),"onClick","doRating_");
+        	if(this._mode != "direct"){
+	        	this.domUnlisten_(this._label.$n(),"onClick","doRating_");
+	            this.domUnlisten_(this._submitbtn.$n(),"onClick","doRatingEnd_");
+	            this.domUnlisten_(this._ratebtn.$n(),"onClick","doRating_");
+        	}else{
+				this.domUnlisten_(this.$n(),"onMouseMove","doDirectRatingScroll_");
+				this.domUnlisten_(this.$n(),"onClick","doDirectRatingEnd_");        		
+        	}
             this.$supers(rating.Rating, "unbind_", arguments);
         },
         /**
@@ -125,6 +141,29 @@
          */
         getZclass: function(){
             return (this._zclass != null ? this._zclass : "z-rating");
+        },
+        doDirectRatingScroll_: function(e){
+        	if(!this._readOnly && ! this._rated){
+        		jq(this.$n("stars")).addClass(this.getZclass()+"-editng");
+	        	var pos = e.pageX , 
+	        		posStartX = jq(this.$n("stars")).offset().left +15 ,
+	        		offset = (posStartX > pos ? 0 : pos - posStartX ),  
+					totalwidth = 14 * 5; //padding-left: 15
+	        	
+	        		if(offset > totalwidth){
+	        			offset = totalwidth;
+	        		}
+	        	this._ratingtmp = zk.parseInt((offset/totalwidth) *100);
+	        	this._updateStar( this._ratingtmp );
+        	}
+        },
+        doDirectRatingEnd_: function(e){
+        	if(!this._readOnly && ! this._rated){
+        		this._updateStar(this._value);
+        		this._rated = true;
+        		this.fire("onRating",{ val: this._ratingtmp });
+        		jq(this.$n("stars")).removeClass(this.getZclass()+"-editng");
+        	}
         },
         /**
          * this method trigger when user going to rate ,
@@ -213,6 +252,13 @@
          * we have three state here.
          */
         _changeState:function(state){
+        	if(this._mode == "direct"){
+                this._slider.setVisible(false);
+                this._submitbtn.setVisible(false);
+                this._ratebtn.setVisible(false);
+                this._label.setVisible(false); 
+                return true;
+        	}
             if(state == rating.Rating.RATED){
                 this._slider.setVisible(false);
                 this._submitbtn.setVisible(false);

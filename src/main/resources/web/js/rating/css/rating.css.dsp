@@ -18,6 +18,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	width: 100px;
 	text-align:center;
 }
+
 .z-rating-star-empty,.z-rating-star-full{
 	float:left;
 }
@@ -45,4 +46,24 @@ it will be useful, but WITHOUT ANY WARRANTY.
     height:14px;
     position:absolute;
     background:url('${c:encodeURL('~./img/rating/star-full.png')}');
+}
+
+/**
+* horizontal mode
+*/
+
+.z-rating-horizontal{
+	width:auto;
+}
+
+.z-rating-horizontal .z-toolbarbutton,.z-rating-horizontal .z-rating-stars,
+	.z-rating-horizontal .z-slider-hor,.z-rating-horizontal .z-label{
+	float:left;
+}
+
+.z-rating-horizontal .z-rating-stars{
+    margin-top: 2px;
+}
+.z-rating-horizontal .z-label{
+	margin-top: 3px;
 }
